@@ -1,9 +1,9 @@
 <template>
     <div class="chess-clock">
-        <ion-card @click="handleClockClick('white')" :color="activePlayer === 'white' ? 'medium' : 'light'" class="chessCard">
+        <ion-card @click="handleClockClick('white')" :color="activePlayer === 'white' ? 'medium' : 'light'" class="chess-card ion-align-items-end chess-card-white">
             <ion-card-content class="content">
-                <h1>White</h1>
-                <div class="time">{{ formatTime(whiteTime) }}</div>
+                <div class="time rotate-180">{{ formatTime(whiteTime) }}</div>
+                <h1 class="rotate-180">White</h1>
             </ion-card-content>
         </ion-card>
         <div class="actionButtons">
@@ -12,7 +12,7 @@
             <ion-button @click="resetClock"><ion-icon :icon="refreshOutline" size="large"></ion-icon></ion-button>
             <ion-button @click="openModal"><ion-icon :icon="ellipsisVerticalOutline" size="large"></ion-icon></ion-button>
         </div>
-        <ion-card  :color="activePlayer === 'black' ? 'medium' : 'light'" @click="handleClockClick('black')" class="chessCard">
+        <ion-card  :color="activePlayer === 'black' ? 'medium' : 'light'" @click="handleClockClick('black')" class="chess-card">
             <ion-card-content class="content">
                 <h1>Black</h1>
                 <div class="time">{{ formatTime(blackTime) }}</div>
@@ -27,13 +27,18 @@ import { onMounted, ref } from 'vue'
 import { IonButton, IonCard, IonCardContent, IonIcon, modalController } from '@ionic/vue';
 import { playOutline, pauseOutline, refreshOutline, ellipsisVerticalOutline } from 'ionicons/icons';
 import Modal from './Modal.vue';
-const whiteTime = ref(5) // 5 minutes in seconds
-const blackTime = ref(5) // 5 minutes in seconds
+const whiteTime = ref(300) // 5 minutes in seconds
+const blackTime = ref(300) // 5 minutes in seconds
 const userWhiteTime = ref(0)
 const userBlackTime = ref(0)
 const activePlayer = ref('white')
 const timer = ref(null)
 const activeTimer = ref(false)
+const whiteExtraSec = ref(0)
+const blackExtraSec = ref(0)
+const previousWhiteTime= ref(0)
+const previousBlackTime = ref(0)
+const method = ref('Fischer')
 const startClock = () => {
     if (timer.value) return;
     timer.value = setInterval(tick, 1000);
@@ -46,18 +51,29 @@ const pauseClock = () => {
 }
 const resetClock = () => {
     pauseClock();
-    whiteTime.value = userWhiteTime.value!=0 ? userWhiteTime.value : 5;
-    blackTime.value = userBlackTime.value!=0 ? userBlackTime.value : 5;
+    whiteTime.value = userWhiteTime.value!=0 ? userWhiteTime.value : 300;
+    blackTime.value = userBlackTime.value!=0 ? userBlackTime.value : 300;
     activePlayer.value = 'white';
 }
-const switchPlayer = () => {
+const switchPlayer = (player) => {
+    player==='white' ? previousBlackTime.value = blackTime.value : previousWhiteTime.value = whiteTime.value
     activePlayer.value = activePlayer.value === 'white' ? 'black' : 'white';
 }
 const handleClockClick = (player) => {
     if (timer.value && activePlayer.value === player) {
-        switchPlayer();
+        if(method.value === 'Fischer'){
+            player === 'white' ? whiteTime.value += parseInt(whiteExtraSec.value) : blackTime.value += parseInt(blackExtraSec.value)
+        }
+        else{
+            player === 'white' ? updateTime(whiteTime, previousWhiteTime, whiteExtraSec) : updateTime(blackTime, previousBlackTime, blackExtraSec)
+        }
+        switchPlayer(player);
     }
 }
+const updateTime = (currentTime, previousTime, extraSec) => {
+    const timeDifference = previousTime.value - currentTime.value;
+    currentTime.value += Math.min(timeDifference, extraSec.value);
+};
 const tick = () => {
     if (activePlayer.value === 'white') {
         if (whiteTime.value > 0) {
@@ -84,16 +100,28 @@ const openModal = async () => {
     pauseClock()
     const modal = await modalController.create({
       component: Modal,
+      componentProps: {
+			whiteTime: userWhiteTime.value ? userWhiteTime.value/60 : 5,
+            blackTime: userBlackTime.value ? userBlackTime.value/60 : 5,
+            whiteExtraSec: whiteExtraSec.value,
+            blackExtraSec: blackExtraSec.value,
+            method: method.value
+		},
     });
     modal.present();
 
     const { data, role } = await modal.onWillDismiss();
 
     if (role === 'confirm') {
-        whiteTime.value = data[0];
-        blackTime.value = data[1];
-        userWhiteTime.value = data[0];
-        userBlackTime.value = data[1];
+        whiteTime.value = data.whiteTime;
+        blackTime.value = data.blackTime;
+        userWhiteTime.value = data.whiteTime;
+        userBlackTime.value = data.blackTime;
+        whiteExtraSec.value = data.whiteExtraSec;
+        blackExtraSec.value = data.blackExtraSec;
+        method.value = data.selectedMethod;
+        previousWhiteTime.value = data.whiteTime;
+        previousBlackTime.value = data.blackTime;
         activePlayer.value = 'white';
     }
 }
@@ -107,9 +135,13 @@ onMounted(()=>{
     flex-direction: column;
     align-items: center;
 }
-.chessCard{
+.chess-card{
     width: 100vw;
-    height: 38vh;
+    height: 35vh;
+}
+.chess-card-white{
+    display: flex;
+    justify-content: center;
 }
 .content{
     display: flex;
@@ -122,5 +154,8 @@ onMounted(()=>{
 }
 .actionButtons{
     display: flex;
+}
+.rotate-180 {
+  transform: rotate(180deg);
 }
 </style>
