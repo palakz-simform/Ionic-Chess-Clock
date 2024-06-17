@@ -8,11 +8,11 @@
     </ion-header>
     <ion-content class="ion-padding">
       <ion-label>Set minutes per player</ion-label>
-      <ion-input type="number" class="ion-margin-top" label="White" label-placement="floating" fill="outline" placeholder="Enter time in minutes" v-model="whiteTime"></ion-input>
-      <ion-input type="number" class="ion-margin-top ion-margin-bottom" label="Black" label-placement="floating" fill="outline" placeholder="Enter time in minutes" v-model="blackTime"></ion-input>
+      <ion-input type="number" min="0" class="ion-margin-top" label="White" label-placement="floating" fill="outline" placeholder="Enter time in minutes" v-model="whiteTime"></ion-input>
+      <ion-input type="number" min="0" class="ion-margin-top ion-margin-bottom" label="Black" label-placement="floating" fill="outline" placeholder="Enter time in minutes" v-model="blackTime"></ion-input>
       <ion-label>Extra seconds</ion-label>
-      <ion-input type="number" class="ion-margin-top" label="White" label-placement="floating" fill="outline" placeholder="Enter time in minutes" v-model="whiteExtraSec"></ion-input>
-      <ion-input type="number" class="ion-margin-top" label="Black" label-placement="floating" fill="outline" placeholder="Enter time in minutes" v-model="blackExtraSec"></ion-input>
+      <ion-input type="number" min="0" class="ion-margin-top" label="White" label-placement="floating" fill="outline" placeholder="Enter time in minutes" v-model="whiteExtraSec"></ion-input>
+      <ion-input type="number" min="0" class="ion-margin-top" label="Black" label-placement="floating" fill="outline" placeholder="Enter time in minutes" v-model="blackExtraSec"></ion-input>
       <ion-item>
         <ion-label>Timing method</ion-label>
         <ion-item  class="ion-float-end">

@@ -5,7 +5,7 @@
         <ion-title>Chess Clock</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content class="ion-padding">
+    <ion-content class="ion-padding-horizontal">
       <ChessClock />
     </ion-content>
   </ion-page>
