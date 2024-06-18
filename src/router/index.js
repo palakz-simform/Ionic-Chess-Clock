@@ -1,8 +1,7 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
-import { RouteRecordRaw } from 'vue-router';
 import ClockPage from '../views/ChessClock.vue'
 
-const routes: Array<RouteRecordRaw> = [
+const routes = [
   {
     path: '/',
     redirect: '/chessClock'
@@ -15,7 +14,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
-    component: () => import("../views/ChessClock.vue")
+    redirect: '/chessClock'
   }
 ]
 

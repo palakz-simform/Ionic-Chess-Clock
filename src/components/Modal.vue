@@ -27,7 +27,7 @@
     </ion-content>
   </template>
 
-  <script lang="ts" setup>
+  <script setup>
     import {
       IonContent,
       IonHeader,
