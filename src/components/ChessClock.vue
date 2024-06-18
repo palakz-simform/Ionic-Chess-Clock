@@ -24,11 +24,12 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { IonButton, IonCard, IonCardContent, IonIcon, modalController } from '@ionic/vue';
+import { IonButton, IonCard, IonCardContent, IonIcon, modalController,IonRippleEffect } from '@ionic/vue';
 import { playOutline, pauseOutline, refreshOutline, ellipsisVerticalOutline } from 'ionicons/icons';
 import Modal from './Modal.vue';
-const whiteTime = ref(300) // 5 minutes in seconds
-const blackTime = ref(300) // 5 minutes in seconds
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
+const whiteTime = ref(300)
+const blackTime = ref(300)
 const userWhiteTime = ref(0)
 const userBlackTime = ref(0)
 const activePlayer = ref('white')
@@ -55,7 +56,8 @@ const resetClock = () => {
     blackTime.value = userBlackTime.value!=0 ? userBlackTime.value : 300;
     activePlayer.value = 'white';
 }
-const switchPlayer = (player) => {
+const switchPlayer = async(player) => {
+    await Haptics.impact({ style: ImpactStyle.Light });
     player==='white' ? previousBlackTime.value = blackTime.value : previousWhiteTime.value = whiteTime.value
     activePlayer.value = activePlayer.value === 'white' ? 'black' : 'white';
 }

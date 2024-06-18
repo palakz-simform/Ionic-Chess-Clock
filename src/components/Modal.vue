@@ -43,6 +43,7 @@
       IonSelectOption
     } from '@ionic/vue';
     import { ref } from 'vue';
+    import { Haptics, ImpactStyle } from '@capacitor/haptics';
     const props = defineProps(['whiteTime','blackTime','whiteExtraSec','blackExtraSec','method'])
     const whiteTime = ref(props.whiteTime);
     const blackTime = ref(props.blackTime);
@@ -50,15 +51,18 @@
     const blackExtraSec = ref(props.blackExtraSec);
     const methods = ref(['Fischer','Bronstein']);
     const selectedMethod = ref(props.method);
-    const confirm = () => modalController.dismiss(
-    {
-      whiteTime: whiteTime.value*60,
-      blackTime: blackTime.value*60,
-      whiteExtraSec : whiteExtraSec.value,
-      blackExtraSec : blackExtraSec.value,
-      selectedMethod : selectedMethod.value
+    const confirm = async () => {
+      await Haptics.impact({ style: ImpactStyle.Medium });
+      modalController.dismiss(
+      {
+        whiteTime: Math.abs(whiteTime.value*60),
+        blackTime: Math.abs(blackTime.value*60),
+        whiteExtraSec : Math.abs(whiteExtraSec.value),
+        blackExtraSec : Math.abs(blackExtraSec.value),
+        selectedMethod : selectedMethod.value
+      }
+      , 'confirm');
     }
-    , 'confirm');
   </script>
 
 <style scoped>
