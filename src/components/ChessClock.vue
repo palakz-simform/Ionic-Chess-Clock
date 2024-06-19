@@ -9,8 +9,8 @@
         <div class="actionButtons">
             <ion-button @click="startClock" v-if="!activeTimer"><ion-icon :icon="playOutline" size="large"></ion-icon></ion-button>
             <ion-button @click="pauseClock" v-else><ion-icon :icon="pauseOutline" size="large"></ion-icon></ion-button>
-            <ion-button @click="resetClock"><ion-icon :icon="refreshOutline" size="large"></ion-icon></ion-button>
-            <ion-button @click="openModal"><ion-icon :icon="ellipsisVerticalOutline" size="large"></ion-icon></ion-button>
+            <ion-button @click="resetClock" :disabled="disableButton"><ion-icon :icon="refreshOutline" size="large"></ion-icon></ion-button>
+            <ion-button @click="openModal" :disabled="disableButton"><ion-icon :icon="ellipsisVerticalOutline" size="large"></ion-icon></ion-button>
         </div>
         <ion-card  :color="activePlayer === 'black' ? 'medium' : 'light'" @click="handleClockClick('black')" class="chess-card">
             <ion-card-content class="content">
@@ -40,15 +40,19 @@ const blackExtraSec = ref(0)
 const previousWhiteTime= ref(0)
 const previousBlackTime = ref(0)
 const method = ref('Fischer')
+const disableButton = ref(false)
+
 const startClock = () => {
     if (timer.value) return;
     timer.value = setInterval(tick, 1000);
     activeTimer.value = true
+    disableButton.value = true
 }
 const pauseClock = () => {
     clearInterval(timer.value);
     timer.value = null;
     activeTimer.value = false
+    disableButton.value = false
 }
 const resetClock = () => {
     pauseClock();
@@ -62,14 +66,19 @@ const switchPlayer = async(player) => {
     activePlayer.value = activePlayer.value === 'white' ? 'black' : 'white';
 }
 const handleClockClick = (player) => {
-    if (timer.value && activePlayer.value === player) {
-        if(method.value === 'Fischer'){
-            player === 'white' ? whiteTime.value += parseInt(whiteExtraSec.value) : blackTime.value += parseInt(blackExtraSec.value)
+    if(!timer.value  && activePlayer.value === player){
+        startClock()
+    }
+    else{
+        if (timer.value && activePlayer.value === player) {
+            if(method.value === 'Fischer'){
+                player === 'white' ? whiteTime.value += parseInt(whiteExtraSec.value) : blackTime.value += parseInt(blackExtraSec.value)
+            }
+            else{
+                player === 'white' ? updateTime(whiteTime, previousWhiteTime, whiteExtraSec) : updateTime(blackTime, previousBlackTime, blackExtraSec)
+            }
+            switchPlayer(player);
         }
-        else{
-            player === 'white' ? updateTime(whiteTime, previousWhiteTime, whiteExtraSec) : updateTime(blackTime, previousBlackTime, blackExtraSec)
-        }
-        switchPlayer(player);
     }
 }
 const updateTime = (currentTime, previousTime, extraSec) => {
