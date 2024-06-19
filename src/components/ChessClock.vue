@@ -18,7 +18,6 @@
                 <div class="time">{{ formatTime(blackTime) }}</div>
             </ion-card-content>
         </ion-card>
-
     </div>
 </template>
 
@@ -85,12 +84,13 @@ const updateTime = (currentTime, previousTime, extraSec) => {
     const timeDifference = previousTime.value - currentTime.value;
     currentTime.value += Math.min(timeDifference, extraSec.value);
 };
-const tick = () => {
+const tick = async() => {
     if (activePlayer.value === 'white') {
         if (whiteTime.value > 0) {
             whiteTime.value--;
         } else {
             pauseClock();
+            await Haptics.vibrate();
             alert('Black wins!');
         }
     } else {
@@ -98,6 +98,7 @@ const tick = () => {
             blackTime.value--;
         } else {
             pauseClock();
+            await Haptics.vibrate();
             alert('White wins!');
         }
     }
