@@ -42,18 +42,18 @@ ionic serve
 #### Android
 ```bash
 ionic build
-npx cap add android
-npx cap sync
-npx cap open android
+ionic cap add android
+ionic cap sync
+ionic cap open android
 ```
 This will open Android Studio. From there, you can build and run your app, which will generate the .apk file.
 
 #### IOS
 ```bash
 ionic build
-npx cap add ios
-npx cap sync
-npx cap open ios
+ionic cap add ios
+ionic cap sync
+ionic cap open ios
 ```
 This will open Xcode. From there, you can build and run your app, which will generate the .ipa file. You will need a macOS machine with Xcode installed to build and test the iOS app.
 
