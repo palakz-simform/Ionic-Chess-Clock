@@ -7,7 +7,7 @@
             </ion-card-content>
         </ion-card>
         <div class="actionButtons">
-            <ion-button @click="startClock" v-if="!activeTimer"><ion-icon :icon="playOutline" size="large"></ion-icon></ion-button>
+            <ion-button @click="startClock" v-if="!activeTimer" :disabled="disablePlay"><ion-icon :icon="playOutline" size="large"></ion-icon></ion-button>
             <ion-button @click="pauseClock" v-else><ion-icon :icon="pauseOutline" size="large"></ion-icon></ion-button>
             <ion-button @click="resetClock" :disabled="disableButton"><ion-icon :icon="refreshOutline" size="large"></ion-icon></ion-button>
             <ion-button @click="openModal" :disabled="disableButton"><ion-icon :icon="ellipsisVerticalOutline" size="large"></ion-icon></ion-button>
@@ -41,6 +41,7 @@ const previousBlackTime = ref(0)
 const method = ref('Fischer')
 const disableButton = ref(false)
 const initialMove = ref(true)
+const disablePlay = ref(false)
 
 const startClock = () => {
     if (timer.value) return;
@@ -56,6 +57,7 @@ const pauseClock = () => {
     disableButton.value = false
 }
 const resetClock = () => {
+    disablePlay.value = false
     pauseClock();
     initialMove.value = true
     whiteTime.value = userWhiteTime.value!=0 ? userWhiteTime.value : 300;
@@ -95,6 +97,7 @@ const tick = async() => {
         } else {
             pauseClock();
             await Haptics.vibrate();
+            disablePlay.value = true
             alert('Black wins!');
         }
     } else {
@@ -103,6 +106,7 @@ const tick = async() => {
         } else {
             pauseClock();
             await Haptics.vibrate();
+            disablePlay.value = true
             alert('White wins!');
         }
     }
@@ -139,6 +143,7 @@ const openModal = async () => {
         previousBlackTime.value = data.blackTime;
         activePlayer.value = 'white';
         initialMove.value = true;
+        disablePlay.value = false
     }
 }
 onMounted(()=>{
