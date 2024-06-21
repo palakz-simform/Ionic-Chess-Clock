@@ -16,7 +16,7 @@ A simple and easy-to-use chess clock app built with Ionic and Capacitor. This ap
 
 - [Node.js](https://nodejs.org/en/)
 - [Ionic CLI](https://ionicframework.com/docs/cli)
-- [Capacitor CLI](https://capacitorjs.com/docs/getting-started)
+- [Capacitor](https://capacitorjs.com/docs/getting-started)
 - [Xcode](https://developer.apple.com/xcode/)
 - [Android Studio](https://developer.android.com/studio)
 
