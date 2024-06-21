@@ -7,7 +7,6 @@ A simple and easy-to-use chess clock app built with Ionic and Capacitor. This ap
 - Customizable time controls
 - Simple and intuitive user interface
 - Pause and resume functionality
-- Sound alerts for time expiration
 - Supports both Android (.apk) and iOS (.ipa) platforms
 
 ## Installation
