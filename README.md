@@ -65,5 +65,8 @@ This will open Xcode. From there, you can build and run your app, which will gen
 - Tap the screen to switch turns between players.
 - The app will alert you when the time for any player runs out.
 
-## Live Link
+## Live demo
 https://ionic-chess-clock.netlify.app/chessClock
+
+## Author
+Palak Zalavadia (palak.z@simformsolutions.com)
