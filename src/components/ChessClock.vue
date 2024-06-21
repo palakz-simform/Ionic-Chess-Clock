@@ -1,6 +1,6 @@
 <template>
     <div class="chess-clock">
-        <ion-card @click="handleClockClick('white')" :color="activePlayer === 'white' ? 'medium' : 'light'" class="chess-card ion-align-items-end chess-card-white">
+        <ion-card @click="handleClockClick('white')" :color="activePlayer === 'white' ? 'medium' : 'light'" class="chess-card ion-align-items-end chess-card-white" :class="{'disable': (activePlayer!=='white' || !disableButton) && !initialMove}">
             <ion-card-content class="content">
                 <div class="time rotate-180">{{ formatTime(whiteTime) }}</div>
                 <h1 class="rotate-180">White</h1>
@@ -12,7 +12,7 @@
             <ion-button @click="resetClock" :disabled="disableButton"><ion-icon :icon="refreshOutline" size="large"></ion-icon></ion-button>
             <ion-button @click="openModal" :disabled="disableButton"><ion-icon :icon="ellipsisVerticalOutline" size="large"></ion-icon></ion-button>
         </div>
-        <ion-card  :color="activePlayer === 'black' ? 'medium' : 'light'" @click="handleClockClick('black')" class="chess-card">
+        <ion-card  :color="activePlayer === 'black' ? 'medium' : 'light'" @click="handleClockClick('black')" class="chess-card" :class="{'disable': activePlayer!=='black' || !disableButton}">
             <ion-card-content class="content">
                 <h1>Black</h1>
                 <div class="time">{{ formatTime(blackTime) }}</div>
@@ -40,6 +40,7 @@ const previousWhiteTime= ref(0)
 const previousBlackTime = ref(0)
 const method = ref('Fischer')
 const disableButton = ref(false)
+const initialMove = ref(true)
 
 const startClock = () => {
     if (timer.value) return;
@@ -48,6 +49,7 @@ const startClock = () => {
     disableButton.value = true
 }
 const pauseClock = () => {
+    initialMove.value = false
     clearInterval(timer.value);
     timer.value = null;
     activeTimer.value = false
@@ -55,17 +57,19 @@ const pauseClock = () => {
 }
 const resetClock = () => {
     pauseClock();
+    initialMove.value = true
     whiteTime.value = userWhiteTime.value!=0 ? userWhiteTime.value : 300;
     blackTime.value = userBlackTime.value!=0 ? userBlackTime.value : 300;
     activePlayer.value = 'white';
 }
 const switchPlayer = async(player) => {
+    initialMove.value = false
     await Haptics.impact({ style: ImpactStyle.Light });
     player==='white' ? previousBlackTime.value = blackTime.value : previousWhiteTime.value = whiteTime.value
     activePlayer.value = activePlayer.value === 'white' ? 'black' : 'white';
 }
 const handleClockClick = (player) => {
-    if(!timer.value  && activePlayer.value === player){
+    if(!timer.value  && player === 'white' && initialMove.value){
         startClock()
     }
     else{
@@ -109,7 +113,6 @@ const formatTime = (seconds) => {
     return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
 }
 const openModal = async () => {
-    pauseClock()
     const modal = await modalController.create({
       component: Modal,
       componentProps: {
@@ -135,6 +138,7 @@ const openModal = async () => {
         previousWhiteTime.value = data.whiteTime;
         previousBlackTime.value = data.blackTime;
         activePlayer.value = 'white';
+        initialMove.value = true;
     }
 }
 onMounted(()=>{
@@ -152,6 +156,7 @@ onMounted(()=>{
 .chess-card{
     width: 100%;
     height: 35vh;
+    cursor: pointer;
 }
 .chess-card-white{
     display: flex;
@@ -171,5 +176,9 @@ onMounted(()=>{
 }
 .rotate-180 {
   transform: rotate(180deg);
+}
+.disable{
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 </style>
